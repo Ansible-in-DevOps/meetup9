@@ -17,6 +17,8 @@ Sperakers: Radosław Zduński and Grzegorz Bołtuć from AiDO Meetup
 
 Steps before Meetup on your GCP account.
 
+1. Create a new project.
+2. Go to IAM & Admin -> Quotas -> CPU over 15, 50GB RAM, 300GB SSD in your region/zone.
 From GCP Cloud Shell run:
 
 ```bash
@@ -38,8 +40,15 @@ gcloud services list --enabled | grep container.googleapis.com
 ```
 
 ```bash
-gcloud container clusters create gitlab-gke-aido --cluster-version=1.17 --num-nodes=3 --machine-type=n1-standard-4 --disk-type "pd-ssd" --disk-size "100" --zone europe-west3-b
-gcloud container clusters get-credentials gitlab-gke-aido
+gcloud container clusters create gitlab-gke-aido --cluster-version=1.16 --num-nodes=3 --machine-type=n1-standard-4 --disk-type "pd-ssd" --disk-size "100" --zone europe-west3-b
+gcloud container clusters get-credentials gitlab-gke-aido --zone europe-west3-b
+```
+
+Or if you don't have enough resources below.
+
+```bash
+gcloud container clusters create gitlab-gke-aido --cluster-version=1.16 --num-nodes=3 --machine-type=n1-standard-2 --disk-type "pd-ssd" --disk-size "20" --zone europe-west3-b
+gcloud container clusters get-credentials gitlab-gke-aido --zone europe-west3-b
 ```
 
 ## Install GitLab using Helm 3 on GKE
@@ -68,7 +77,7 @@ helm repo add gitlab https://charts.gitlab.io/
 helm repo update
 helm upgrade --install gitlab gitlab/gitlab                    \
              --version 4.3.5                                   \
-             --timeout 600                                     \
+             --timeout 600s                                     \
              --set global.hosts.externalIP=${LB_IP_ADDR}       \
              --set global.hosts.domain=${LB_IP_ADDR}.nip.io    \
              --set gitlab-runner.runners.privileged=true       \
@@ -79,7 +88,7 @@ Wait 5-10 min to starting pods.
 If unicorn is running, you can login to Web.
 
 ```bash
-kubectl get pods -l app=unicorn
+kubectl get pods
 echo; echo "https://gitlab.${LB_IP_ADDR}.nip.io"; echo
 ```
 
@@ -100,7 +109,7 @@ echo; curl https://gitlab.com/gitlab-workshops/gitlab-on-gke-gnext/raw/master/gi
 4. Go to Kubernetes section. Next Add existing cluster.
 
 ```bash
-echo; kubectl cluster-info | awk '/Kubernetes master/ {print $NF}'; echo
+echo; kubectl cluster-info | awk '/Kubernetes master/ {print $NF}'; echo #API URL
 echo; kubectl get secret $(kubectl get secrets | grep default-token| awk '{print $1}') -o jsonpath="{['data']['ca\.crt']}" | base64 --decode; echo; echo
 kubectl create serviceaccount -n default gitlab
 kubectl create clusterrolebinding gitlab-cluster-admin --serviceaccount default:gitlab --clusterrole=cluster-admin
@@ -110,12 +119,14 @@ echo; kubectl -n default get secret $(kubectl -n default get secrets| awk '/^git
 5. Install **Ingress** and **Prometheus** to your GKE. GKE section.
 6. Add Base domain GKE information in GitLab (DNS name). GKE section.
 7. Install GitLab Runner using GCP Cloud Shell.
+
    7.1. Get certificate from your Web page {LB_IP_ADDR}.nip.io
+
    7.2 Create file on your Cloud Shell {LB_IP_ADDR}.nip.io.crt
 
 ```bash
 kubectl create ns gitlab-managed-apps
-kubectl --namespace gitlab-managed-apps create secret generic gitlabcrt --from-file=${LB_IP_ADDR}.nip.io.crt
+kubectl --namespace gitlab-managed-apps create secret generic gitlabcrt --from-file=gitlab.${LB_IP_ADDR}.nip.io.crt
 git clone https://github.com/Ansible-in-DevOps/meetup9.git
 cd meetup9
 nano values_gl_runner.yaml # Add gitlabUrl and runnerRegistrationToken -> GitLab -> Admin section -> Runners
@@ -123,3 +134,23 @@ helm upgrade --install gitlab-runner-aido --namespace gitlab-managed-apps -f ./v
 ```
 
 Check GitLab -> Admin section -> Runners.
+
+Pipelines:
+
+```bash
+image: node:14
+
+stages:
+  - test
+
+test_async:
+  variables:
+    GIT_SSL_NO_VERIFY: "true"  
+  stage: test
+  script:
+   - npm install
+   - ls -la
+  tags:
+    - aido
+```    
+
