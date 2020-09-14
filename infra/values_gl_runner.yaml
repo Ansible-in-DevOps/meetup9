@@ -51,7 +51,7 @@ runners:
   ## commands. Please read the docs before turning this on:
   ## ref: https://docs.gitlab.com/runner/executors/kubernetes.html#using-docker-dind
   ##
-  privileged: false
+  privileged: true
 
   ## Namespace to run Kubernetes jobs in (defaults to 'default')
   ##

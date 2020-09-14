@@ -1,0 +1,26 @@
+## GitLab pipeline to building and running NodeJS app
+## AiDO 2020
+
+stages:
+  - build
+  - infra
+
+build-push-image:
+  stage: build
+  image: docker:18.09
+  variables:
+    #REPOSITORY_URL:
+    DOCKER_HOST: tcp://127.0.0.1:2375/
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:18.09-dind
+  script:
+    - docker build -t appnode14:v1 .
+    #- docker push
+    - docker images
+    - docker run --name app14 -d appnode14:v1 
+    - docker ps
+    - docker logs app14
+    - docker stop app14
+  tags:
+    - aido

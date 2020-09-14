@@ -128,29 +128,21 @@ echo; kubectl -n default get secret $(kubectl -n default get secrets| awk '/^git
 kubectl create ns gitlab-managed-apps
 kubectl --namespace gitlab-managed-apps create secret generic gitlabcrt --from-file=gitlab.${LB_IP_ADDR}.nip.io.crt
 git clone https://github.com/Ansible-in-DevOps/meetup9.git
-cd meetup9
+cd meetup9/infra
 nano values_gl_runner.yaml # Add gitlabUrl and runnerRegistrationToken -> GitLab -> Admin section -> Runners
 helm upgrade --install gitlab-runner-aido --namespace gitlab-managed-apps -f ./values_gl_runner.yaml gitlab/gitlab-runner --version 0.20.1
 ```
 
 Check GitLab -> Admin section -> Runners.
 
-Pipelines:
 
-```bash
-image: node:14
+## Setup CI/CD pipeline 
 
-stages:
-  - test
+1. Create apps repo.
+   
+Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/master). 
 
-test_async:
-  variables:
-    GIT_SSL_NO_VERIFY: "true"  
-  stage: test
-  script:
-   - npm install
-   - ls -la
-  tags:
-    - aido
-```    
+1. **gitlab-ci.yml** and **Dockerfile** to root tree. 
+2. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there.
 
+Now create infra repo.

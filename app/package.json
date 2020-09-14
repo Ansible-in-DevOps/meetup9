@@ -1,0 +1,16 @@
+{
+    "name": "node-js-hello",
+    "version": "1.0.0",
+    "description": "The Node.js Hello app.",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {
+      "express": "^4.0.0"
+    },
+    "engines": {
+      "node": "14.10.x"
+    },
+    "license": "MIT"
+  }
