@@ -9,16 +9,16 @@ build-push-image:
   stage: build
   image: docker:18.09
   variables:
-    #REPOSITORY_URL:
     DOCKER_HOST: tcp://127.0.0.1:2375/
     DOCKER_DRIVER: overlay2
   services:
     - docker:18.09-dind
   script:
-    - docker build -t appnode14:v1 .
-    #- docker push
+    #- docker login --insecure-registry -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/group/project/appnode14:v1 .
+    #- docker push $CI_REGISTRY/group/project/appnode14:v1
     - docker images
-    - docker run --name app14 -d appnode14:v1 
+    - docker run --name app14 -d $CI_REGISTRY/group/project/appnode14:v1 
     - docker ps
     - docker logs app14
     - docker stop app14

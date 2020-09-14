@@ -145,4 +145,8 @@ Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/m
 1. **gitlab-ci.yml** and **Dockerfile** to root tree. 
 2. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there.
 
+Check if Docker registry is enabled. https://docs.gitlab.com/ee/user/packages/container_registry/
+
+Next add token for Docker registry and add Vars: **CI_REGISTRY_USER**, **CI_REGISTRY_PASSWORD** and **CI_REGISTRY**.
+
 Now create infra repo.
