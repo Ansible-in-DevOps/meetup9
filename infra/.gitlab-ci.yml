@@ -1,4 +1,3 @@
-## GitLab pipeline to building and running NodeJS app
 ## AiDO 2020
 
 stages:
@@ -6,23 +5,28 @@ stages:
 
 build-push-image:
   stage: build
-  image: docker:17-dind
+  image: docker:18.09
   variables:
     DOCKER_HOST: tcp://127.0.0.1:2375
     DOCKER_DRIVER: overlay2
   services:
-    - name: docker:17-dind
-      command: ["--insecure-registry=gitlab.34.107.27.159.nip.io"]
+    - docker:18.09-dind
+  before_script:
+      - apk add --update make ca-certificates openssl python3
+      - update-ca-certificates    
   script:
-    - mkdir -p /etc/docker/certs.d/$REGISTRY_NAME
-    - cp $CA_CRT /etc/docker/certs.d/$REGISTRY_NAME/ca.crt
-    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD $REGISTRY_NAME    
-    - docker build -t $REGISTRY_NAME/root/apps .
-    - docker push $REGISTRY_NAME/root/apps
+    - docker build -t node14v1 .
+    # Write our GCP service account private key into a file
+    - cp $GCLOUD_SERVICE_KEY ${HOME}/gcloud-service-key.json
+    # Download and install Google Cloud SDK
+    - wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz
+    - tar zxvf google-cloud-sdk.tar.gz && ./google-cloud-sdk/install.sh --usage-reporting=false --path-update=true
+    - google-cloud-sdk/bin/gcloud --quiet components update
+    - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+    # Create our image. Expected to create an image 'image_id'      
+    - docker tag node14v1 gcr.io/$GCP_PROJECT_ID/node14v1   
     - docker images
-    - docker run --name app14 -d $REGISTRY_NAME/root/apps:14v1 
-    - docker ps
-    - docker logs app14
-    - docker stop app14
+    - google-cloud-sdk/bin/gcloud docker -- push gcr.io/$GCP_PROJECT_ID/node14v1:latest
   tags:
     - aido
+
