@@ -65,7 +65,8 @@ Get IP and e-mail.
 
 ```bash
 gcloud compute addresses create endpoints-ip --region europe-west3
-export LB_IP_ADDR="$(gcloud compute addresses list | awk '/endpoints-ip/ {print$2}')"; echo "LB_IP_ADDR=${LB_IP_ADDR}"
+gcloud compute addresses list
+export LB_IP_ADDR="$(gcloud compute addresses list | tail -1 | awk '/endpoints-ip/ {print$2}')"; echo "LB_IP_ADDR=${LB_IP_ADDR}"  #should be 1 IP address
 nslookup ${LB_IP_ADDR}.nip.io
 export EMAIL="$(gcloud auth list 2> /dev/null | awk '/^\*/ {print $2}')"; echo $EMAIL
 ```
@@ -117,19 +118,23 @@ echo; kubectl -n default get secret $(kubectl -n default get secrets| awk '/^git
 ```
 
 5. Install **Ingress** and **Prometheus** to your GKE. GKE section.
-6. Add Base domain GKE information in GitLab (DNS name). GKE section.
+6. Add Base domain GKE information in GitLab (DNS name). GKE section. ->  gitlab.{LB_IP_ADDR}.nip.io
 7. Install GitLab Runner using GCP Cloud Shell.
 
-   7.1. Get certificate from your Web page {LB_IP_ADDR}.nip.io
+   7.1. Get certificate from your Web page gitlab.{LB_IP_ADDR}.nip.io 
+   
+   ```bash
+   echo | openssl s_client -servername gitlab.{LB_IP_ADDR}.nip.io -connect gitlab.{LB_IP_ADDR}.nip.io:443
+   ```
 
-   7.2 Create file on your Cloud Shell {LB_IP_ADDR}.nip.io.crt
+   7.2 Create file on your Cloud Shell gitlab.{LB_IP_ADDR}.nip.io.crt and copy certificate (from -----BEGIN CERTIFICATE----- to  -----END CERTIFICATE-----)
 
 ```bash
 kubectl create ns gitlab-managed-apps
 kubectl --namespace gitlab-managed-apps create secret generic gitlabcrt --from-file=gitlab.${LB_IP_ADDR}.nip.io.crt
 git clone https://github.com/Ansible-in-DevOps/meetup9.git
 cd meetup9/infra
-nano values_gl_runner.yaml # Add gitlabUrl and runnerRegistrationToken -> GitLab -> Admin section -> Runners
+nano values_gl_runner.yaml # Add gitlabUrl and runnerRegistrationToken -> GitLab -> Admin section -> Overview -> Runners
 helm upgrade --install gitlab-runner-aido --namespace gitlab-managed-apps -f ./values_gl_runner.yaml gitlab/gitlab-runner --version 0.20.1
 ```
 
@@ -138,15 +143,25 @@ Check GitLab -> Admin section -> Runners.
 
 ## Setup CI/CD pipeline 
 
-1. Create apps repo.
+1. Create apps repo -> Project **apps** -> Private with README
    
 Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/master). 
+
+Use Web IDE. 
 
 1. **gitlab-ci.yml** and **Dockerfile** to root tree. 
 2. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there.
 
+## Setup Docker Container Registry 
+
 Check if Docker registry is enabled. https://docs.gitlab.com/ee/user/packages/container_registry/
 
-Next add token for Docker registry and add Vars: **CI_REGISTRY_USER**, **CI_REGISTRY_PASSWORD** and **CI_REGISTRY**.
+Next add token for Docker registry. User Settings -> Access Tokens -> Name: docker registry -> api -> copy token and go to the apps project.
+
+In our case docker registry is **gitlab.{LB_IP_ADDR}.nip.io**. Standard https port 443. 
+
+On virtual server/dind and direct docker daemon you have to add **ca.crt** to **/etc/docker/certs.d/**. But we get x509: certificate signed by unknown authority. So only one option is add support for **--insecure-registry**
+
+Vars -> Settings -> CI/CD -> Variables : **REGISTRY_USER**, **REGISTRY_PASSWORD**, **REGISTRY_NAME** as var.
 
 Now create infra repo.
