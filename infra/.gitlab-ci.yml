@@ -3,22 +3,24 @@
 
 stages:
   - build
-  - infra
 
 build-push-image:
   stage: build
-  image: docker:18.09
+  image: docker:17-dind
   variables:
-    DOCKER_HOST: tcp://127.0.0.1:2375/
+    DOCKER_HOST: tcp://127.0.0.1:2375
     DOCKER_DRIVER: overlay2
   services:
-    - docker:18.09-dind
+    - name: docker:17-dind
+      command: ["--insecure-registry=gitlab.34.107.27.159.nip.io"]
   script:
-    #- docker login --insecure-registry -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $CI_REGISTRY/group/project/appnode14:v1 .
-    #- docker push $CI_REGISTRY/group/project/appnode14:v1
+    - mkdir -p /etc/docker/certs.d/$REGISTRY_NAME
+    - cp $CA_CRT /etc/docker/certs.d/$REGISTRY_NAME/ca.crt
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD $REGISTRY_NAME    
+    - docker build -t $REGISTRY_NAME/root/apps .
+    - docker push $REGISTRY_NAME/root/apps
     - docker images
-    - docker run --name app14 -d $CI_REGISTRY/group/project/appnode14:v1 
+    - docker run --name app14 -d $REGISTRY_NAME/root/apps:14v1 
     - docker ps
     - docker logs app14
     - docker stop app14
