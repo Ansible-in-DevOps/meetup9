@@ -165,3 +165,11 @@ On virtual server/dind and direct docker daemon you have to add **ca.crt** to **
 Vars -> Settings -> CI/CD -> Variables : **REGISTRY_USER**, **REGISTRY_PASSWORD**, **REGISTRY_NAME** as var.
 
 Now create infra repo.
+
+## Setup GCP Container registry
+
+Go to APIs & Services -> Enable Api -> Check if is enabled. 
+
+Go to IAM & Admin and create **service account** with role **Storage Admin**. Next get KEY from service account. 
+
+Add **GCLOUD_SERVICE_KEY** and **GCP_PROJECT_ID** to GitLab Project Vars.
