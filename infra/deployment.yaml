@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-app
-        image: gcr.io/gitlab-289008/node14v1:latest
+        image: ##COPY GCR LINK HERE##
         ports:
         - containerPort: 7777
         env:
