@@ -9,24 +9,22 @@ build-push-image:
   variables:
     DOCKER_HOST: tcp://127.0.0.1:2375
     DOCKER_DRIVER: overlay2
+    NODE_IMAGE: 'node14:v2'
   services:
     - docker:18.09-dind
   before_script:
       - apk add --update make ca-certificates openssl python3
       - update-ca-certificates    
   script:
-    - docker build -t node14v1 .
+    - docker build -t $NODE_IMAGE .
     # Write our GCP service account private key into a file
     - cp $GCLOUD_SERVICE_KEY ${HOME}/gcloud-service-key.json
     # Download and install Google Cloud SDK
     - wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz
     - tar zxvf google-cloud-sdk.tar.gz && ./google-cloud-sdk/install.sh --usage-reporting=false --path-update=true
     - google-cloud-sdk/bin/gcloud --quiet components update
-    - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
-    # Create our image. Expected to create an image 'image_id'      
-    - docker tag node14v1 gcr.io/$GCP_PROJECT_ID/node14v1   
-    - docker images
-    - google-cloud-sdk/bin/gcloud docker -- push gcr.io/$GCP_PROJECT_ID/node14v1:latest
+    - google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json    
+    - docker tag $NODE_IMAGE gcr.io/$GCP_PROJECT_ID/$NODE_IMAGE   
+    - google-cloud-sdk/bin/gcloud docker -- push gcr.io/$GCP_PROJECT_ID/$NODE_IMAGE
   tags:
     - aido
-
