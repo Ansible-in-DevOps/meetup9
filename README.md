@@ -9,7 +9,7 @@ Sperakers: Radosław Zduński and Grzegorz Bołtuć from AiDO Meetup
 ## Useful links
 
 1. https://google.qwiklabs.com/ -> Introduction to GitLab on GKE
-2. 
+2. https://cloud.google.com/kubernetes-engine/docs/quickstarts/deploying-a-language-specific-app#node.js_1
 3. GitLab runner: https://docs.gitlab.com/runner/
 
 
