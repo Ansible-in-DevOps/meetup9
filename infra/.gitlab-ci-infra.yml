@@ -1,0 +1,20 @@
+## AiDO 2020
+stages:
+  - deploy
+
+deploy-app:
+  stage: deploy
+  image: google/cloud-sdk:alpine
+  script:
+    # Authenticate with GKE
+    - cp $GCLOUD_SERVICE_KEY ./key.json
+    - gcloud components install kubectl
+    - gcloud auth activate-service-account --key-file=key.json
+    - gcloud config set project $GCP_PROJECT_ID
+    - gcloud config set container/cluster $GKE_CLUSTER_NAME
+    - gcloud config set compute/zone europe-west2-a
+    - gcloud container clusters get-credentials $GKE_CLUSTER_NAME --zone $GKE_ZONE
+    # Do the deployment
+    - kubectl apply -f deployment.yaml -f service.yaml -n node
+  tags:
+    - aido
