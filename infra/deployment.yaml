@@ -15,6 +15,7 @@ spec:
       containers:
       - name: hello-app
         image: ##COPY GCR LINK HERE##
+        imagePullPolicy: "Always"        
         ports:
         - containerPort: 7777
         env:
