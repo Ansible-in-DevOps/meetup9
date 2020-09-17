@@ -136,12 +136,22 @@ git clone https://github.com/Ansible-in-DevOps/meetup9.git
 cd meetup9/infra
 nano values_gl_runner.yaml # Add gitlabUrl and runnerRegistrationToken -> GitLab -> Admin section -> Overview -> Runners
 helm upgrade --install gitlab-runner-aido --namespace gitlab-managed-apps -f ./values_gl_runner.yaml gitlab/gitlab-runner --version 0.20.1
+kubectl create ns node
 ```
 
 Check GitLab -> Admin section -> Runners.
 
+## Setup GCP Container registry
 
-## Setup CI/CD pipeline 
+Go to APIs & Services -> Enable Api -> Check if is enabled. 
+
+Go to IAM & Admin and create **service account** with role **Storage Admin** and **Kubernetes Engine Developer**. Next get KEY from service account. 
+
+Add **GCLOUD_SERVICE_KEY** and **GCP_PROJECT_ID** to GitLab **app/infra** Project Vars.
+
+Add **GKE_CLUSTER_NAME** and **GKE_ZONE** to GitLab **infra** Project Vars
+
+## Setup CI/CD pipeline app
 
 1. Create apps repo -> Project **apps** -> Private with README
    
@@ -149,27 +159,28 @@ Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/m
 
 Use Web IDE. 
 
-1. **gitlab-ci.yml** and **Dockerfile** to root tree. 
+1. **gitlab-ci-app.yml** as named **gitlab-ci.yml** and **Dockerfile** to root tree. 
 2. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there.
+3. Commit to master. 
+4. Check id pipeline finish with success -> app Project -> CI/CD
+5. Check GCP Container Registry from Console if a new image **node14v1** is visible. Copy gcr link. 
 
-## Setup Docker Container Registry 
+## Setup CI/CD pipeline infra 
 
-Check if Docker registry is enabled. https://docs.gitlab.com/ee/user/packages/container_registry/
+1. Create apps repo -> Project **infra** -> Private with README
 
-Next add token for Docker registry. User Settings -> Access Tokens -> Name: docker registry -> api -> copy token and go to the apps project.
+Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/master). 
 
-In our case docker registry is **gitlab.{LB_IP_ADDR}.nip.io**. Standard https port 443. 
+Use Web IDE. 
 
-On virtual server/dind and direct docker daemon you have to add **ca.crt** to **/etc/docker/certs.d/**. But we get x509: certificate signed by unknown authority. So only one option is add support for **--insecure-registry**
+1. **deployment.yaml**, **service.yaml** and **gitlab-ci-infra.yml** as named **gitlab-ci.yml** to root tree. 
+2. Edit deployment, add your name gcr link to your image. 
+3. Commit to master. 
+4. Check if pipeline finish with success. 
+5. Go to Cloud Shell.
 
-Vars -> Settings -> CI/CD -> Variables : **REGISTRY_USER**, **REGISTRY_PASSWORD**, **REGISTRY_NAME** as var.
+```bash
+kubectl get pods -n node
+kubectl get svc -n node
+```
 
-Now create infra repo.
-
-## Setup GCP Container registry
-
-Go to APIs & Services -> Enable Api -> Check if is enabled. 
-
-Go to IAM & Admin and create **service account** with role **Storage Admin**. Next get KEY from service account. 
-
-Add **GCLOUD_SERVICE_KEY** and **GCP_PROJECT_ID** to GitLab Project Vars.
