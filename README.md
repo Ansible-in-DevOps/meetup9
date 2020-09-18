@@ -149,7 +149,7 @@ Go to IAM & Admin and create **service account** with role **Storage Admin** and
 
 Create apps repo -> Project **apps** -> Private with README
 
-Create apps repo -> Project **infra** -> Private with README
+Create infra repo -> Project **infra** -> Private with README
 
 Add **GCLOUD_SERVICE_KEY** (full file, type file) and **GCP_PROJECT_ID** (type vars) to GitLab **app/infra** Project Vars. Settings -> CI/CD -> Vars -> Expand -> Add. 
 
@@ -161,8 +161,8 @@ Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/m
 
 Use Web IDE in **apps** Project. 
 
-1. Create file as named **.gitlab-ci.yml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/.gitlab-ci-app.yml
-2. Create file as named **Dockerfile** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/Dockerfile
+1. Create file named as **.gitlab-ci.yml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/.gitlab-ci-app.yml
+2. Create file named as **Dockerfile** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/Dockerfile
 3. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there from https://github.com/Ansible-in-DevOps/meetup9/blob/master/app
 4. Commit to master. 
 5. Check id pipeline finish with success -> app Project -> CI/CD
@@ -174,9 +174,9 @@ Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/m
 
 Use Web IDE in **infra** Project. 
 
-1. Create file as named **deployment.yaml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/deployment.yaml
-2. Create file as named **service.yaml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/service.yaml
-3. Create file as named **.gitlab-ci.yml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/.gitlab-ci-infra.yml 
+1. Create file named as **deployment.yaml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/deployment.yaml
+2. Create file named as **service.yaml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/service.yaml
+3. Create file named as **.gitlab-ci.yml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/.gitlab-ci-infra.yml 
 4. Edit deployment, add your name gcr link to your image. 
 5. Commit to master. 
 6. Check if pipeline finish with success. 
@@ -187,3 +187,9 @@ kubectl get pods -n node
 kubectl get svc -n node
 ```
 
+## Bonus -> K9s
+
+```bash
+https://github.com/derailed/k9s.git
+make build && ./execs/k9s
+```
