@@ -124,10 +124,10 @@ echo; kubectl -n default get secret $(kubectl -n default get secrets| awk '/^git
    7.1. Get certificate from your Web page gitlab.{LB_IP_ADDR}.nip.io 
    
    ```bash
-   echo | openssl s_client -servername gitlab.{LB_IP_ADDR}.nip.io -connect gitlab.{LB_IP_ADDR}.nip.io:443
+   echo | openssl s_client -servername gitlab.${LB_IP_ADDR}.nip.io -connect gitlab.${LB_IP_ADDR}.nip.io:443
    ```
 
-   7.2 Create file on your Cloud Shell gitlab.{LB_IP_ADDR}.nip.io.crt and copy certificate (from -----BEGIN CERTIFICATE----- to  -----END CERTIFICATE-----)
+   7.2 Create file on your Cloud Shell gitlab.${LB_IP_ADDR}.nip.io.crt and copy certificate (from -----BEGIN CERTIFICATE----- to  -----END CERTIFICATE-----)
 
 ```bash
 kubectl create ns gitlab-managed-apps
