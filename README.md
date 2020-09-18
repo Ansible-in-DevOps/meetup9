@@ -187,12 +187,3 @@ kubectl get pods -n node
 kubectl get svc -n node
 ```
 
-## Bonus -> K9s
-
-From Cloud Shell:
-
-```bash
-git clone https://github.com/derailed/k9s.git
-cd ./k9s
-make build && ./execs/k9s
-```
