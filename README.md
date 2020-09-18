@@ -143,41 +143,44 @@ Check GitLab -> Admin section -> Runners.
 
 ## Setup GCP Container registry
 
-Go to APIs & Services -> Enable Api -> Check if is enabled. 
+Go to APIs & Services -> Enable Api -> Check if **Google Container Registry API** is enabled. 
 
-Go to IAM & Admin and create **service account** with role **Storage Admin** and **Kubernetes Engine Developer**. Next get KEY from service account. 
+Go to IAM & Admin and create **service account** with role **Storage Admin** and **Kubernetes Engine Developer**. Next generate KEY from service account. 
 
-Add **GCLOUD_SERVICE_KEY** and **GCP_PROJECT_ID** to GitLab **app/infra** Project Vars.
+Create apps repo -> Project **apps** -> Private with README
 
-Add **GKE_CLUSTER_NAME** and **GKE_ZONE** to GitLab **infra** Project Vars
+Create apps repo -> Project **infra** -> Private with README
+
+Add **GCLOUD_SERVICE_KEY** (full file, type file) and **GCP_PROJECT_ID** (type vars) to GitLab **app/infra** Project Vars. Settings -> CI/CD -> Vars -> Expand -> Add. 
+
+Add **GKE_CLUSTER_NAME** (type vars) and **GKE_ZONE** (type vars) to GitLab **infra** Project Vars
 
 ## Setup CI/CD pipeline app
-
-1. Create apps repo -> Project **apps** -> Private with README
-   
+ 
 Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/master). 
 
-Use Web IDE. 
+Use Web IDE in **apps** Project. 
 
-1. **gitlab-ci-app.yml** as named **gitlab-ci.yml** and **Dockerfile** to root tree. 
-2. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there.
-3. Commit to master. 
-4. Check id pipeline finish with success -> app Project -> CI/CD
-5. Check GCP Container Registry from Console if a new image **node14v1** is visible. Copy gcr link. 
+1. Create file as named **.gitlab-ci.yml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/.gitlab-ci-app.yml
+2. Create file as named **Dockerfile** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/Dockerfile
+3. Next create app dir and copy/paste **index.js**, **package.json** and **start.sh** there from https://github.com/Ansible-in-DevOps/meetup9/blob/master/app
+4. Commit to master. 
+5. Check id pipeline finish with success -> app Project -> CI/CD
+6. Check GCP Container Registry from Console if a new image **node14v1** is visible. Copy gcr link. 
 
 ## Setup CI/CD pipeline infra 
 
-1. Create apps repo -> Project **infra** -> Private with README
-
 Copy/paste code from Meetup9 https://github.com/Ansible-in-DevOps/meetup9/tree/master). 
 
-Use Web IDE. 
+Use Web IDE in **infra** Project. 
 
-1. **deployment.yaml**, **service.yaml** and **gitlab-ci-infra.yml** as named **gitlab-ci.yml** to root tree. 
-2. Edit deployment, add your name gcr link to your image. 
-3. Commit to master. 
-4. Check if pipeline finish with success. 
-5. Go to Cloud Shell.
+1. Create file as named **deployment.yaml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/deployment.yaml
+2. Create file as named **service.yaml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/service.yaml
+3. Create file as named **.gitlab-ci.yml** to root tree from https://github.com/Ansible-in-DevOps/meetup9/blob/master/infra/.gitlab-ci-infra.yml 
+4. Edit deployment, add your name gcr link to your image. 
+5. Commit to master. 
+6. Check if pipeline finish with success. 
+7. Go to Cloud Shell.
 
 ```bash
 kubectl get pods -n node
