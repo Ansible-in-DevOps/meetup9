@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellonode-gke
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello-app
+        image: ##COPY GCR LINK HERE##
+        imagePullPolicy: "Always"        
+        ports:
+        - containerPort: 7777
+        env:
+          - name: PORT
+            value: "7777"
