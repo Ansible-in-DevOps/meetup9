@@ -17,7 +17,7 @@ Sperakers: Radosław Zduński and Grzegorz Bołtuć from AiDO Meetup
 
 Steps before Meetup on your GCP account.
 
-1. Create a new project.
+1. Create a new project, for example: GitLab-AiDO.
 2. Go to IAM & Admin -> Quotas -> CPU over 15, 50GB RAM, 300GB SSD in your region/zone.
 From GCP Cloud Shell run:
 
