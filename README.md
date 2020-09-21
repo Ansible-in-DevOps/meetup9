@@ -107,7 +107,6 @@ echo; curl https://gitlab.com/gitlab-workshops/gitlab-on-gke-gnext/raw/master/gi
 
 2. Go to admin area.
 3. Find **License** section and **Upload New License**.
-4. Go to Kubernetes section. Next Add existing cluster.
 
 ```bash
 echo; kubectl cluster-info | awk '/Kubernetes master/ {print $NF}'; echo #API URL
@@ -117,11 +116,12 @@ kubectl create clusterrolebinding gitlab-cluster-admin --serviceaccount default:
 echo; kubectl -n default get secret $(kubectl -n default get secrets| awk '/^gitlab-token/ {print $1}') -o jsonpath="{['data']['token']}" | base64 --decode; echo; echo
 ```
 
+4. Go to Kubernetes section. Next Add existing cluster.
 5. Install **Ingress** and **Prometheus** to your GKE. GKE section.
-6. Add Base domain GKE information in GitLab (DNS name). GKE section. ->  gitlab.{LB_IP_ADDR}.nip.io
+6. Add Base domain GKE information in GitLab (DNS name). GKE section. ->  gitlab.${LB_IP_ADDR}.nip.io
 7. Install GitLab Runner using GCP Cloud Shell.
 
-   7.1. Get certificate from your Web page gitlab.{LB_IP_ADDR}.nip.io 
+   7.1. Get certificate from your Web page gitlab.${LB_IP_ADDR}.nip.io 
    
    ```bash
    echo | openssl s_client -servername gitlab.${LB_IP_ADDR}.nip.io -connect gitlab.${LB_IP_ADDR}.nip.io:443
@@ -186,4 +186,10 @@ Use Web IDE in **infra** Project.
 kubectl get pods -n node
 kubectl get svc -n node
 ```
+
+1. Open web browser with **external IP** from service and port **7777**
+2. Change number or freplica in deployment from 1 to 5.
+3. Check pods and web url again a few times. 
+
+
 
