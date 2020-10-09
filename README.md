@@ -2,11 +2,11 @@
 
 
 
-Date: Wednesday, October 14, 2020 5:00 PM to 7:00 PM CET
-Place: online
-Link: https://www.meetup.com/Cloud-Native-Kubernetes-Warsaw/events/273791578/
-Organizer: Cloud-Native-Kubernetes-Warsaw
-Sperakers: Radosław Zduński and Grzegorz Bołtuć from AiDO Meetup
+### Date: Wednesday, October 14, 2020 5:00 PM to 7:00 PM CET
+### Place: online
+### Link: https://www.meetup.com/Cloud-Native-Kubernetes-Warsaw/events/273791578/
+### Organizer: Cloud-Native-Kubernetes-Warsaw
+### Sperakers: Radosław Zduński and Grzegorz Bołtuć from AiDO Meetup
 
 ## Useful links
 
