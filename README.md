@@ -106,10 +106,11 @@ echo; echo "https://gitlab.${LB_IP_ADDR}.nip.io"; echo
 ```bash
 echo; kubectl get secret gitlab-gitlab-initial-root-password -ojsonpath={.data.password} | base64 --decode ; echo; echo
 echo; curl https://gitlab.com/gitlab-workshops/gitlab-on-gke-gnext/raw/master/gitlab-on-gke/gitlab.license; echo; echo
+## In License issue Check if you copy full comamnd
 ```
 
 2. Go to admin area.
-3. Find **License** section and **Upload New License**.
+3. Find **License** section and **Upload New License**.  
 
 ```bash
 echo; kubectl cluster-info | awk '/Kubernetes master/ {print $NF}'; echo #API URL
@@ -119,7 +120,7 @@ kubectl create clusterrolebinding gitlab-cluster-admin --serviceaccount default:
 echo; kubectl -n default get secret $(kubectl -n default get secrets| awk '/^gitlab-token/ {print $1}') -o jsonpath="{['data']['token']}" | base64 --decode; echo; echo
 ```
 
-4. Go to Kubernetes section. Next Add existing cluster.
+4. Go to Kubernetes section. Next Add existing cluster. If you got issue with connection to cluster, check you pods. 
 5. Install **Ingress** and **Prometheus** to your GKE. GKE section.
 6. Add Base domain GKE information in GitLab (DNS name). GKE section. ->  gitlab.${LB_IP_ADDR}.nip.io
 7. Install GitLab Runner using GCP Cloud Shell.
@@ -194,5 +195,9 @@ kubectl get svc -n node
 2. Change number or freplica in deployment from 1 to 5.
 3. Check pods and web url again a few times. 
 
+## Last and very important step -> remove GKE cluster after workshop from Shell
 
+ ```bash
+gcloud container clusters delete gitlab-gke-aido
+```
 
