@@ -7,6 +7,7 @@
 ### Link: https://www.meetup.com/Cloud-Native-Kubernetes-Warsaw/events/273791578/
 ### Organizer: Cloud-Native-Kubernetes-Warsaw
 ### Sperakers: Radosław Zduński and Grzegorz Bołtuć from AiDO Meetup
+### Video: https://lnkd.in/e5beRru
 
 ## Useful links
 
